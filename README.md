@@ -12,22 +12,21 @@ arduino-cli core update-index
 arduino-cli core install esp32:esp32
 ```
 
-Confirm the installed core and list supported ESP32-C6 boards:
+## Apple Silicon
+
+Arduino's `ctags` helper requires Rosetta 2:
 
 ```sh
-arduino-cli core list
-arduino-cli board listall "ESP32C6 Dev Module"
+softwareupdate --install-rosetta --agree-to-license
 ```
 
-## Connected board
+## Build and upload
 
-The connected board is available on `/dev/cu.usbmodem1101`.
-
-Use the generic ESP32-C6 FQBN `esp32:esp32:esp32c6` to compile and upload a sketch:
+The included `HelloSerial` demo targets `esp32:esp32:esp32c6`:
 
 ```sh
-arduino-cli compile --fqbn esp32:esp32:esp32c6 <sketch-directory>
-arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:esp32c6 <sketch-directory>
+arduino-cli compile --fqbn esp32:esp32:esp32c6 HelloSerial
+arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:esp32c6 HelloSerial
 ```
 
-Use `arduino-cli board list` to check the current USB serial port before uploading.
+Run `arduino-cli board list` to check the USB serial port before uploading.
