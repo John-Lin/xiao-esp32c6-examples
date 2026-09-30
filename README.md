@@ -25,8 +25,9 @@ softwareupdate --install-rosetta --agree-to-license
 The included `HelloSerial` demo targets `esp32:esp32:esp32c6`:
 
 ```sh
-arduino-cli compile --fqbn esp32:esp32:esp32c6 HelloSerial
-arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:esp32c6 HelloSerial
+arduino-cli compile --fqbn esp32:esp32:esp32c6:CDCOnBoot=cdc HelloSerial
+arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:esp32c6:CDCOnBoot=cdc HelloSerial
+arduino-cli monitor -p /dev/cu.usbmodem1101 --config baudrate=115200
 ```
 
 Run `arduino-cli board list` to check the USB serial port before uploading.
