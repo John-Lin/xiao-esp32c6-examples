@@ -2,6 +2,11 @@
 
 This workspace targets the Seeed Studio XIAO ESP32C6 with Arduino CLI. Arduino IDE is not required.
 
+## Hardware prerequisites
+
+- Seeed Studio XIAO ESP32C6
+- USB-C data cable
+
 ## One-time setup
 
 ```sh
