@@ -1,4 +1,4 @@
-# ESP32-C6 Arduino CLI Setup
+# XIAO ESP32-C6 Arduino CLI Examples
 
 This workspace targets the Seeed Studio XIAO ESP32C6 with Arduino CLI. Arduino IDE is not required.
 
