@@ -48,3 +48,13 @@ arduino-cli upload -p <port> --fqbn esp32:esp32:XIAO_ESP32C6 Blink
 - [Blink](Blink/README.md): blinks the onboard user LED.
 - [WiFiScanner](WiFiScanner/README.md): scans nearby Wi-Fi networks.
 - [BLEScanner](BLEScanner/README.md): scans nearby Bluetooth LE devices.
+
+## Troubleshooting
+
+### Serial monitor is empty
+
+The XIAO FQBN used in this repository enables USB CDC by default. If you compile for the generic ESP32-C6 board instead, enable USB CDC so `Serial` is sent to the USB port:
+
+```sh
+arduino-cli compile --fqbn esp32:esp32:esp32c6:CDCOnBoot=cdc <sketch-directory>
+```
