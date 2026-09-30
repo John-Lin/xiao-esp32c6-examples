@@ -25,13 +25,21 @@ Arduino's `ctags` helper requires Rosetta 2:
 softwareupdate --install-rosetta --agree-to-license
 ```
 
+## Find the upload port
+
+```sh
+arduino-cli board list
+```
+
+Use the value in the `Port` column as `<port>` in upload commands. Common forms are `/dev/cu.usbmodem...` on macOS, `/dev/ttyACM0` or `/dev/ttyUSB0` on Linux, and `COM3` on Windows. The reported value is authoritative.
+
 ## Quick start
 
 [Blink](Blink/README.md) is the simplest example. It blinks the onboard user LED.
 
 ```sh
 arduino-cli compile --fqbn esp32:esp32:XIAO_ESP32C6 Blink
-arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:XIAO_ESP32C6 Blink
+arduino-cli upload -p <port> --fqbn esp32:esp32:XIAO_ESP32C6 Blink
 ```
 
 ## Examples
@@ -40,5 +48,3 @@ arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:XIAO_ESP32C6 Blink
 - [Blink](Blink/README.md): blinks the onboard user LED.
 - [WiFiScanner](WiFiScanner/README.md): scans nearby Wi-Fi networks.
 - [BLEScanner](BLEScanner/README.md): scans nearby Bluetooth LE devices.
-
-Run `arduino-cli board list` to check the USB serial port before uploading.
