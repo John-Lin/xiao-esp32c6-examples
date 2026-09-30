@@ -27,7 +27,7 @@ softwareupdate --install-rosetta --agree-to-license
 
 ## Build and upload
 
-The included `HelloSerial` and `Blink` demos target `esp32:esp32:XIAO_ESP32C6`:
+The included `HelloSerial`, `Blink`, `WiFiScanner`, and `BLEScanner` demos target `esp32:esp32:XIAO_ESP32C6`:
 
 ```sh
 arduino-cli compile --fqbn esp32:esp32:XIAO_ESP32C6 HelloSerial
@@ -35,6 +35,6 @@ arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:XIAO_ESP32C6 Hello
 arduino-cli monitor -p /dev/cu.usbmodem1101 --config baudrate=115200
 ```
 
-Replace `HelloSerial` with `Blink` to flash the onboard LED.
+Replace `HelloSerial` with another example directory to build it.
 
 Run `arduino-cli board list` to check the USB serial port before uploading.
