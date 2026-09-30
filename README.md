@@ -1,6 +1,6 @@
 # ESP32-C6 Arduino CLI Setup
 
-This workspace uses Arduino CLI with the Espressif Arduino core. Arduino IDE is not required.
+This workspace targets the Seeed Studio XIAO ESP32C6 with Arduino CLI. Arduino IDE is not required.
 
 ## One-time setup
 
@@ -22,12 +22,14 @@ softwareupdate --install-rosetta --agree-to-license
 
 ## Build and upload
 
-The included `HelloSerial` demo targets `esp32:esp32:esp32c6`:
+The included `HelloSerial` and `Blink` demos target `esp32:esp32:XIAO_ESP32C6`:
 
 ```sh
-arduino-cli compile --fqbn esp32:esp32:esp32c6:CDCOnBoot=cdc HelloSerial
-arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:esp32c6:CDCOnBoot=cdc HelloSerial
+arduino-cli compile --fqbn esp32:esp32:XIAO_ESP32C6 HelloSerial
+arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:XIAO_ESP32C6 HelloSerial
 arduino-cli monitor -p /dev/cu.usbmodem1101 --config baudrate=115200
 ```
+
+Replace `HelloSerial` with `Blink` to flash the onboard LED.
 
 Run `arduino-cli board list` to check the USB serial port before uploading.
