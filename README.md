@@ -25,16 +25,20 @@ Arduino's `ctags` helper requires Rosetta 2:
 softwareupdate --install-rosetta --agree-to-license
 ```
 
-## Build and upload
+## Quick start
 
-The included `HelloSerial` and `Blink` demos target `esp32:esp32:XIAO_ESP32C6`:
+[Blink](Blink/README.md) is the simplest example. It blinks the onboard user LED.
 
 ```sh
-arduino-cli compile --fqbn esp32:esp32:XIAO_ESP32C6 HelloSerial
-arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:XIAO_ESP32C6 HelloSerial
-arduino-cli monitor -p /dev/cu.usbmodem1101 --config baudrate=115200
+arduino-cli compile --fqbn esp32:esp32:XIAO_ESP32C6 Blink
+arduino-cli upload -p /dev/cu.usbmodem1101 --fqbn esp32:esp32:XIAO_ESP32C6 Blink
 ```
 
-Replace `HelloSerial` with `Blink` to flash the onboard LED.
+## Examples
+
+- [HelloSerial](HelloSerial/README.md): prints a message over USB serial.
+- [Blink](Blink/README.md): blinks the onboard user LED.
+- [WiFiScanner](WiFiScanner/README.md): scans nearby Wi-Fi networks.
+- [BLEScanner](BLEScanner/README.md): scans nearby Bluetooth LE devices.
 
 Run `arduino-cli board list` to check the USB serial port before uploading.
