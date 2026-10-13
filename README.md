@@ -48,6 +48,7 @@ arduino-cli upload -p <port> --fqbn esp32:esp32:XIAO_ESP32C6 Blink
 - [Blink](Blink/README.md): blinks the onboard user LED.
 - [WiFiScanner](WiFiScanner/README.md): scans nearby Wi-Fi networks.
 - [BLEScanner](BLEScanner/README.md): scans nearby Bluetooth LE devices.
+- [MQTTLed](MQTTLed/README.md): controls the onboard LED with ON/OFF messages from a local MQTT broker.
 
 ## Troubleshooting
 
