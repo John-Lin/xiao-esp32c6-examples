@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdtempSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 const generator = fileURLToPath(new URL('../scripts/generate-mqtt-config.mjs', import.meta.url));
+const builder = fileURLToPath(new URL('../scripts/build-mqtt-led.sh', import.meta.url));
 const fixture = {
   WIFI_SSID: 'Test "Lab" \\ 測試',
   WIFI_PASSWORD: 'test-only $;\'"\\ password',
@@ -131,6 +132,34 @@ test('help works without credentials', () => {
   assert.match(result.stdout, /Usage:/);
   assert.match(result.stdout, /WIFI_SSID/);
   assert.equal(result.stderr, '');
+});
+
+test('build script help works without loading local credentials', () => {
+  const result = spawnSync('bash', [builder, '--help'], { encoding: 'utf8' });
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage:/);
+  assert.match(result.stdout, /--upload/);
+  assert.equal(result.stderr, '');
+});
+
+for (const args of [['--upload'], ['--upload', ''], ['unknown'], ['--upload', 'port', 'extra']]) {
+  test(`build script rejects invalid arguments: ${JSON.stringify(args)}`, () => {
+    const result = spawnSync('bash', [builder, ...args], { encoding: 'utf8' });
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, /^Usage:/);
+  });
+}
+
+test('build script stops before compile/upload when configuration is missing', t => {
+  const env = { ...process.env };
+  for (const name of Object.keys(fixture)) delete env[name];
+  const result = spawnSync('bash', [builder, '--upload', 'not-a-real-port'], {
+    cwd: workspace(t), env, encoding: 'utf8',
+  });
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'WIFI_SSID must be set.\n');
 });
 
 for (const args of [[], ['one', 'two']]) {

@@ -1,11 +1,9 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
+#include "Config.h"
 #include "LedCommand.h"
 
-const char* wifiSsid = "YOUR_WIFI_SSID";
-const char* wifiPassword = "YOUR_WIFI_PASSWORD";
-const char* mqttHost = "192.168.1.100";  // Replace with your Mac's LAN IP.
 const uint16_t mqttPort = 1883;
 
 WiFiClient wifiClient;

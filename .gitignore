@@ -1,0 +1,6 @@
+# Local credentials and direnv state.
+/.envrc
+/.direnv/
+
+# Generated MQTT configuration contains credentials.
+/MQTTLed/Config.h

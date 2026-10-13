@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Run the hardware-independent MQTT command tests without Arduino dependencies.
+# Run hardware-independent MQTT command and configuration tests.
 set -euo pipefail
 
 if [[ "${1:-}" == "--help" ]]; then
   echo "Usage: scripts/test-mqtt-led.sh"
-  echo "Build and run MQTT LED command tests using a C++ compiler (CXX or c++)."
+  echo "Run MQTT LED command and configuration tests (requires C++ and Node.js)."
   exit 0
 fi
 if [[ $# -ne 0 ]]; then
@@ -24,3 +24,4 @@ trap 'rm -rf "$build_dir"' EXIT
 "$compiler" -std=c++11 -Wall -Wextra -Werror -pedantic \
   "$root/tests/MQTTLedTest.cpp" -o "$build_dir/mqtt-led-test"
 "$build_dir/mqtt-led-test"
+node --test "$root/tests/MQTTConfigTest.mjs"

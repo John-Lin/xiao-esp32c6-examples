@@ -46,7 +46,7 @@ brew services stop mosquitto
 
 Do not run two brokers on the same port.
 
-## 2. Find your Mac's LAN IP
+## 2. Find the broker computer's LAN IP
 
 ```sh
 networksetup -listallhardwareports
@@ -59,57 +59,89 @@ if Wi-Fi uses `en1`:
 ipconfig getifaddr en1
 ```
 
-Use your actual interface, not necessarily `en1`. Put the resulting IPv4 address
-in `mqttHost` below. The ESP32 must reach that address from a 2.4 GHz Wi-Fi
+Run these commands on the Mac running the broker. Use its actual interface,
+not necessarily `en1`. Put the resulting IPv4 address in `MQTT_HOST` below. The ESP32 must reach that address from a 2.4 GHz Wi-Fi
 network; guest networks/client isolation may prevent this. The Mac may use
 Ethernet or a different Wi-Fi band as long as the devices can reach each other.
 
 Allow incoming connections to Mosquitto if macOS prompts you. If the Mac's DHCP
-address changes, update `mqttHost` and upload again (or reserve the address in
+address changes, update `MQTT_HOST` in `.envrc` and rebuild/upload (or reserve the address in
 your router). The Mac must remain awake for the broker to be reachable.
 
 ## 3. Configure and upload the sketch
 
-Edit these values in `MQTTLed/MQTTLed.ino`:
+Requires Arduino CLI, Node.js, and direnv. On macOS, install Node.js and direnv
+with `brew install node direnv` if needed.
 
-```cpp
-const char* wifiSsid = "YOUR_WIFI_SSID";
-const char* wifiPassword = "YOUR_WIFI_PASSWORD";
-const char* mqttHost = "192.168.1.100";  // Your Mac's actual LAN IP.
-```
-
-Do not use `localhost` or `127.0.0.1` for `mqttHost`: on the ESP32 those mean the
-ESP32 itself, not your Mac. Do not commit real Wi-Fi credentials.
-
-From the repository root:
+From the repository root, create the local configuration without overwriting
+an existing `.envrc`:
 
 ```sh
+test -e .envrc || cp .envrc.example .envrc
+```
+
+Edit `.envrc` with your local settings:
+
+```sh
+export WIFI_SSID='YOUR_WIFI_SSID'
+export WIFI_PASSWORD='YOUR_WIFI_PASSWORD'
+export MQTT_HOST='192.168.1.100'
+```
+
+`MQTT_HOST` is the LAN IP of the computer running the broker. Do not use
+`localhost` or `127.0.0.1`: on the ESP32 those mean the ESP32 itself.
+Set `WIFI_PASSWORD=''` explicitly for an open network. Values cannot contain
+control characters. `.envrc` is shell code; quote values carefully, especially
+passwords containing `$`, quotes, or backslashes.
+
+Approve your local file after creating or editing it, then compile:
+
+```sh
+direnv allow .
 arduino-cli lib install "PubSubClient@2.8"
-arduino-cli compile --fqbn esp32:esp32:XIAO_ESP32C6 MQTTLed
+direnv exec . scripts/build-mqtt-led.sh
+```
+
+The build script regenerates `MQTTLed/Config.h` from the environment before each
+compile. Missing/invalid settings stop the build instead of using an old header.
+Use this script rather than compiling the MQTT sketch directly. `direnv exec`
+loads `.envrc` explicitly, so no shell hook is required.
+
+Find the port, then compile and upload in one command:
+
+```sh
 arduino-cli board list
-arduino-cli upload -p <port> --fqbn esp32:esp32:XIAO_ESP32C6 MQTTLed
+direnv exec . scripts/build-mqtt-led.sh --upload <port>
 arduino-cli monitor -p <port> --config baudrate=115200
 ```
 
 Replace `<port>` with the value reported by `arduino-cli board list`. Wait for
 `MQTT connected. Subscribed to xiao/led/set` before publishing.
 
+`.envrc`, `.direnv/`, and the generated `MQTTLed/Config.h` are ignored by Git.
+Commit `.envrc.example`, not real credentials. The generated header uses private
+file permissions. Credentials are still embedded in the compiled firmware and
+Arduino build cache: Git ignore does not encrypt them. Do not share build
+artifacts, use shell tracing (`set -x`) with secrets, or print the environment.
+Changing `.envrc` requires rebuilding and uploading; it is not read at runtime.
+
 ## 4. Publish from another Mac terminal
 
 Turn the LED on:
 
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 1883 -t xiao/led/set -m ON
+direnv exec . sh -c 'mosquitto_pub -h "$MQTT_HOST" -p 1883 -t xiao/led/set -m ON'
 ```
 
 Turn it off:
 
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 1883 -t xiao/led/set -m OFF
+direnv exec . sh -c 'mosquitto_pub -h "$MQTT_HOST" -p 1883 -t xiao/led/set -m OFF'
 ```
 
-Using `127.0.0.1` here is correct because the publisher and broker both run on
-the Mac. You can also use the Mac's LAN IP for these commands.
+Run these commands from the repository root. They use the broker IP from
+`.envrc`, including when the broker runs on a different computer. `127.0.0.1`
+is only appropriate for publishing from the computer running the broker.
 
 The serial monitor prints `LED ON` or `LED OFF` after handling the message.
 There is no state-report topic: a successful publish alone does not prove the
@@ -129,26 +161,29 @@ Run hardware-independent tests from the repository root:
 scripts/test-mqtt-led.sh
 ```
 
-These test the actual payload decoder, including non-null-terminated payloads,
-active-low output levels, other topics, empty/truncated payloads, and invalid
-commands. They do not verify networking or physical GPIO output.
+These test the actual payload decoder and configuration scripts. Configuration
+tests compile generated headers with a real C++ compiler to check escaping and
+UTF-8, and verify missing settings, private permissions, and error reporting
+without credentials in logs. They do not verify networking or physical GPIO output.
 
 With a connected board, check:
 
 1. Boot: the user LED is off, then Wi-Fi and MQTT connect.
 2. Publish `ON`, then `OFF`: the LED and serial output match each command.
-3. Publish `on`, `INVALID`, or an empty message (`mosquitto_pub -h 127.0.0.1
-   -t xiao/led/set -n`): the LED stays unchanged and serial reports it was ignored.
+3. Publish `on`, `INVALID`, or an empty message (`direnv exec . sh -c
+   'mosquitto_pub -h "$MQTT_HOST" -t xiao/led/set -n'`): the LED stays unchanged
+   and serial reports it was ignored.
 4. Stop/restart the broker: the board reconnects and accepts new commands.
 5. Disable/restore the access point: Wi-Fi and MQTT recover, then new commands work.
 6. Reboot the board: it starts off and subscribes again.
 
-If Wi-Fi connects but MQTT does not, check `mqttHost`, the broker listener,
+If Wi-Fi connects but MQTT does not, check `MQTT_HOST`, the broker listener,
 macOS firewall, and network isolation. If Wi-Fi never connects, check the SSID,
 password, and 2.4 GHz network availability.
 
 ## References
 
+- [direnv](https://direnv.net/)
 - [PubSubClient API](https://pubsubclient.knolleary.net/api)
 - [Mosquitto configuration](https://mosquitto.org/man/mosquitto-conf-5.html)
 - [XIAO ESP32C6 hardware](https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/)
