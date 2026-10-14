@@ -1,0 +1,7 @@
+// Copy to Config.h and fill in local settings. Do not commit Config.h.
+#pragma once
+
+constexpr char wifiSsid[] = "YOUR_WIFI_SSID";
+constexpr char wifiPassword[] = "YOUR_WIFI_PASSWORD";
+// LAN IP of the computer running the MQTT broker, not the ESP32.
+constexpr char mqttHost[] = "192.168.1.100";
