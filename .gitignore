@@ -1,0 +1,6 @@
+# Local shell settings may contain credentials.
+/.envrc
+/.direnv/
+
+# Local MQTT configuration contains credentials.
+/MQTTLed/Config.h
