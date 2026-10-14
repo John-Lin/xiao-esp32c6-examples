@@ -50,6 +50,27 @@ arduino-cli upload -p <port> --fqbn esp32:esp32:XIAO_ESP32C6 Blink
 - [BLEScanner](BLEScanner/README.md): scans nearby Bluetooth LE devices.
 - [MQTTLed](MQTTLed/README.md): controls the onboard LED with ON/OFF messages from a local MQTT broker.
 
+## Compile and upload with Make
+
+The root Makefile supports all examples. Run from the repository root:
+
+```sh
+make compile EXAMPLE=Blink
+make upload EXAMPLE=WiFiScanner
+make upload EXAMPLE=MQTTLed PORT=<port>
+```
+
+Set `EXAMPLE` to `Blink`, `HelloSerial`, `WiFiScanner`, `BLEScanner`, or `MQTTLed`.
+It defaults to `MQTTLed`, so `make compile` and `make upload` also work without
+an `EXAMPLE` argument. Configure `MQTTLed/Config.h` and install PubSubClient as
+described in [MQTTLed/README.md](MQTTLed/README.md) before using that example.
+
+`make upload` always compiles first. Without `PORT`, it auto-selects only when
+Arduino CLI lists one ESP32 device; otherwise it asks you to specify the port.
+Find the port with `arduino-cli board list` and pass `PORT=<port>` explicitly.
+Run `make help` for usage. The original Arduino CLI commands remain available
+in each example's README.
+
 ## Troubleshooting
 
 ### Serial monitor is empty

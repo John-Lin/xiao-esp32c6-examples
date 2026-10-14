@@ -94,7 +94,7 @@ literals: escape a quote as `\"` and a backslash as `\\` inside the strings.
 The sketch includes `Config.h` directly. No environment variables, generated
 headers, Node.js, or direnv are required.
 
-Compile, find the port, and upload:
+Compile, find the port, and upload from the repository root:
 
 ```sh
 arduino-cli lib install "PubSubClient@2.8"
@@ -140,19 +140,6 @@ The sketch retries MQTT connections every five seconds after failures and
 resubscribes after reconnection. Wi-Fi recovery waits until the network returns.
 
 ## Verification
-
-Run hardware-independent tests from the repository root:
-
-```sh
-test_dir="$(mktemp -d)"
-c++ -std=c++11 -Wall -Wextra -Werror -pedantic tests/MQTTLedTest.cpp -o "$test_dir/mqtt-led-test"
-"$test_dir/mqtt-led-test"
-rm -rf "$test_dir"
-```
-
-These test the actual payload decoder, including active-low output levels,
-non-null-terminated payloads, other topics, and invalid commands. They do not
-verify networking or physical GPIO output.
 
 With a connected board, check:
 
