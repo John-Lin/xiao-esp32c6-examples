@@ -158,7 +158,11 @@ resubscribes after reconnection. Wi-Fi recovery waits until the network returns.
 Run hardware-independent tests from the repository root:
 
 ```sh
-scripts/test-mqtt-led.sh
+test_dir="$(mktemp -d)"
+c++ -std=c++11 -Wall -Wextra -Werror -pedantic tests/MQTTLedTest.cpp -o "$test_dir/mqtt-led-test"
+"$test_dir/mqtt-led-test"
+rm -rf "$test_dir"
+node --test tests/MQTTConfigTest.mjs
 ```
 
 These test the actual payload decoder and configuration scripts. Configuration
