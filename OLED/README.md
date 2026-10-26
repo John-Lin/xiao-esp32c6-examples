@@ -80,9 +80,6 @@ device responds but the screen is still blank, confirm the controller and 64x32
 panel specifications. An `OLED buffer allocation failed.` message indicates
 that the display buffer could not be allocated.
 
-The [hardware layout test](../tests/OLEDLayout/README.md) checks all 2048
-framebuffer pixels against the expected large-text layout.
-
 ## References
 
 - [Product page](https://www.taiwaniot.com.tw/product/0-49-inch-micro-oled-display-64x32-i2c-ssd1306/)
