@@ -26,12 +26,13 @@ void setup() {
   }
 
   display.clearDisplay();
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-  // The full greeting is wider than 64 pixels in the default font.
-  display.println("Hello,");
-  display.println("OLED!");
+  // Five 12-pixel-wide characters leave a 2-pixel margin on each side.
+  display.setCursor(2, 0);
+  display.print("Hello");
+  display.setCursor(2, 16);
+  display.print("OLED!");
   display.display();
   Serial.printf("OLED frame sent to 0x%02X.\n", OLED_ADDR);
 }

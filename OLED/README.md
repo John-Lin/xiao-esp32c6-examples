@@ -1,8 +1,12 @@
 # OLED
 
-Displays `Hello,` and `OLED!` on two lines of a 0.49-inch, 64x32 I2C SSD1306
-OLED. The text is drawn once and remains visible until power is removed or the
-board resets. No separate display reset pin is used.
+Displays `Hello` and `OLED!` on two lines of a 0.49-inch, 64x32 I2C SSD1306
+OLED. The default font is scaled 2x: each character cell is 12x16 pixels, so
+five characters occupy 60 pixels with a 2-pixel margin on either side. The two
+lines use the full 32-pixel cell height, with normal spacing around the glyphs.
+The text is drawn once and remains visible until power is removed or the board
+resets. No separate display reset pin is used. Connect the OLED before power-up,
+or press RESET after connecting it; initialization is not retried in `loop()`.
 
 ## Wiring
 
@@ -57,9 +61,10 @@ arduino-cli upload -p <port> --fqbn esp32:esp32:XIAO_ESP32C6 OLED
 
 1. Run `make compile EXAMPLE=OLED`: it must compile for the XIAO ESP32C6 without
    errors.
-2. Upload with the OLED connected: `Hello,` appears on the first line and `OLED!`
-   on the second, with no missing or clipped characters. The rest of the screen
-   is clear, and the text remains visible without a serial monitor connected.
+2. Upload with the OLED connected: `Hello` appears on the first line and `OLED!`
+   on the second, both at 2x size with matching 2-pixel cell margins. No characters
+   are missing, clipped, or wrapped. The text remains visible without a serial
+   monitor connected.
 3. Open the serial monitor and reset the board: it reports
    `OLED frame sent to 0x3C.` This confirms the software reached the display
    transfer, not that the panel visibly rendered it; check the screen too.
@@ -74,6 +79,9 @@ An I2C acknowledgement only proves that a device responds at that address;
 device responds but the screen is still blank, confirm the controller and 64x32
 panel specifications. An `OLED buffer allocation failed.` message indicates
 that the display buffer could not be allocated.
+
+The [hardware layout test](../tests/OLEDLayout/README.md) checks all 2048
+framebuffer pixels against the expected large-text layout.
 
 ## References
 
