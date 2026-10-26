@@ -48,6 +48,7 @@ arduino-cli upload -p <port> --fqbn esp32:esp32:XIAO_ESP32C6 Blink
 - [Blink](Blink/README.md): blinks the onboard user LED.
 - [WiFiScanner](WiFiScanner/README.md): scans nearby Wi-Fi networks.
 - [BLEScanner](BLEScanner/README.md): scans nearby Bluetooth LE devices.
+- [OLED](OLED/README.md): displays a greeting on a 64x32 I2C SSD1306 OLED.
 - [MQTTLed](MQTTLed/README.md): controls the onboard LED with ON/OFF messages from a local MQTT broker.
 
 ## Compile and upload with Make
@@ -60,10 +61,12 @@ make upload EXAMPLE=WiFiScanner
 make upload EXAMPLE=MQTTLed PORT=<port>
 ```
 
-Set `EXAMPLE` to `Blink`, `HelloSerial`, `WiFiScanner`, `BLEScanner`, or `MQTTLed`.
-It defaults to `MQTTLed`, so `make compile` and `make upload` also work without
-an `EXAMPLE` argument. Configure `MQTTLed/Config.h` and install PubSubClient as
-described in [MQTTLed/README.md](MQTTLed/README.md) before using that example.
+Set `EXAMPLE` to `Blink`, `HelloSerial`, `WiFiScanner`, `BLEScanner`, `OLED`, or
+`MQTTLed`. It defaults to `MQTTLed`, so `make compile` and `make upload` also work
+without an `EXAMPLE` argument. Configure `MQTTLed/Config.h` and install
+PubSubClient as described in [MQTTLed/README.md](MQTTLed/README.md) before using
+that example. For `OLED`, install the Adafruit dependencies as described in
+[OLED/README.md](OLED/README.md).
 
 `make upload` always compiles first. Without `PORT`, it auto-selects only when
 Arduino CLI lists one ESP32 device; otherwise it asks you to specify the port.
